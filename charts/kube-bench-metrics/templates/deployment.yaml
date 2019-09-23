@@ -26,7 +26,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           args:
           - --versionOverride
-          - "1.13"
+          - {{ .Values.versionOverride }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
