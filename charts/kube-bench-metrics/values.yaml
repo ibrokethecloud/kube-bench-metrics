@@ -45,3 +45,5 @@ tolerations:
         value: "true"
 
 affinity: {}
+
+versionOverride: "1.13"

@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -x
 
 ## Eventually might add logic here for auto-detection #
 ## Cannot depent on auto-detection from kube-bench because
