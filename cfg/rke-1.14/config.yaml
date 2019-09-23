@@ -1,0 +1,33 @@
+---
+## Version-specific settings that override the values in cfg/config.yaml
+master:
+  components:
+    - apiserver
+    - scheduler
+    - controllermanager
+    - etcd
+    - flanneld
+    # kubernetes is a component to cover the config file /etc/kubernetes/config that is referred to in the benchmark
+    - kubernetes
+
+
+  apiserver:
+    optional: true
+  scheduler:
+    optional: true
+  controllermanager:
+    optional: true
+  etcd:
+    optional: true
+  flanneld:
+    optional: true
+  kubernetes:
+    optional: true
+node:
+  components:
+    - kubelet
+
+  kubelet:
+    optional: true
+    config:
+      - /etc/kubernetes/ssl/kubecfg-kube-node.yaml
