@@ -221,16 +221,16 @@ groups:
     audit: "ps -ef | grep $apiserverbin | grep -v grep"
     tests:
       test_items:
-      - flag: "--disable-admission-plugins"
+      - flag: "--enable-admission-plugins"
         compare:
-          op: nothave
+          op: has
           value: "NamespaceLifecycle"
         set: true
     remediation: |
       Edit the API server pod specification file $apiserverconf
-      on the master node and set the --disable-admission-plugins parameter to
-      ensure it does not include NamespaceLifecycle.
-      --disable-admission-plugins=...,NamespaceLifecycle,...
+      on the master node and set the --enable-admission-plugins parameter to
+      include SecurityContextDeny.
+      --enable-admission-plugins=...,NamespaceLifecycle,...
     scored: true
 
   - id: 1.1.15
@@ -1191,7 +1191,7 @@ groups:
   
   - id: 1.4.19
     text: "Ensure that the Kubernetes PKI directory and file ownership is set to root:root (Scored)"
-    audit: "check_files_owner_in_dir.sh /node/etc/kubernetes/ssl"
+    audit: "check_files_owner_in_dir.sh /etc/kubernetes/ssl"
     tests:
       test_items:
         - flag: "true"
@@ -1206,7 +1206,7 @@ groups:
     
   - id: 1.4.20
     text: "Ensure that the Kubernetes PKI certificate file permissions are set to 644 or more restrictive (Scored)"
-    audit: "check_files_permissions.sh /node/etc/kubernetes/ssl/!(*key).pem"
+    audit: "check_files_permissions.sh /etc/kubernetes/ssl/!(*key).pem"
     tests:
       test_items:
         - flag: "true"
@@ -1221,7 +1221,7 @@ groups:
     
   - id: 1.4.21
     text: "Ensure that the Kubernetes PKI certificate file permissions are set to 600 or more restrictive (Scored)"
-    audit: "check_files_permissions.sh /node/etc/kubernetes/ssl/*key.pem 600"
+    audit: "check_files_permissions.sh /etc/kubernetes/ssl/*key.pem 600"
     tests:
       test_items:
         - flag: "true"
@@ -1258,7 +1258,10 @@ groups:
     text: "Ensure that the --client-cert-auth argument is set to true (Scored)"
     audit: "ps -ef | grep $etcdbin | grep -v grep"
     tests:
+      bin_op: or
       test_items:
+      - flag: "--client-cert-auth"
+        set: true
       - flag: "--client-cert-auth"
         compare:
           op: eq

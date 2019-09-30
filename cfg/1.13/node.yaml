@@ -418,7 +418,7 @@ groups:
     - id: 2.2.7
       text: "Ensure that the certificate authorities file permissions are set to
       644 or more restrictive (Scored)"
-      audit: "/bin/sh -c 'if test -e /node/etc/kubernetes/ssl/kube-ca.pem; then stat -c %a /node/etc/kubernetes/ssl/kube-ca.pem; fi'"
+      audit: "/bin/sh -c 'if test -e /etc/kubernetes/ssl/kube-ca.pem; then stat -c %a /etc/kubernetes/ssl/kube-ca.pem; fi'"
       tests:
         bin_op: or
         test_items:
@@ -444,7 +444,7 @@ groups:
 
     - id: 2.2.8
       text: "Ensure that the client certificate authorities file ownership is set to root:root (Scored)"
-      audit: "/bin/sh -c 'if test -e /node/etc/kubernetes/ssl/kube-ca.pem; then stat -c %U:%G /node/etc/kubernetes/ssl/kube-ca.pem; fi'"
+      audit: "/bin/sh -c 'if test -e /etc/kubernetes/ssl/kube-ca.pem; then stat -c %U:%G /etc/kubernetes/ssl/kube-ca.pem; fi'"
       tests:
         test_items:
           - flag: "root:root"
