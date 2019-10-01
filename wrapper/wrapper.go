@@ -15,11 +15,12 @@ type Wrapper struct {
 	CommandOutput []byte
 	Error         error
 	NodeType      []string
+	NodeName      string
 }
 
 // NewWrapper is the initialisation function
 // It returns the wrapper object which can then be used to generate the metrics
-func NewWrapper(nodeType string) (w *Wrapper) {
+func NewWrapper(nodeType string, hostname string) (w *Wrapper) {
 	nodeChecks := []string{}
 	if nodeType == "master" {
 		nodeChecks = []string{"master", "node"}
@@ -28,6 +29,7 @@ func NewWrapper(nodeType string) (w *Wrapper) {
 	}
 	w = &Wrapper{
 		NodeType: nodeChecks,
+		NodeName: hostname,
 	}
 	return w
 }

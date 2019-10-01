@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/ibrokethecloud/kube-bench-metrics/k8s"
 	"github.com/ibrokethecloud/kube-bench-metrics/metrics"
 	"github.com/ibrokethecloud/kube-bench-metrics/wrapper"
 	"github.com/sirupsen/logrus"
@@ -56,10 +57,15 @@ func runWrapper(ctx *cli.Context) (err error) {
 	// For now just parse the yaml and generate the metrics
 	delay := ctx.Int("delay")
 	nodeType := ctx.String("nodeType")
+	nodeName, err := k8s.NodeFinder()
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
 	// Run kube-bench cli in a predefined interval
 	go func() {
 		for {
-			w := wrapper.NewWrapper(nodeType)
+			w := wrapper.NewWrapper(nodeType, nodeName)
 			for _, node := range w.NodeType {
 				err := w.RunBenchMarking(ctx, node)
 				if err != nil {

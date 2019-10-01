@@ -1,0 +1,19 @@
+{{ if and .Values.prometheus.enabled  .Values.prometheus.namespace}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: {{ include "kube-metrics-wrapper.name" . }}
+  name: {{ include "kube-metrics-wrapper.name" . }}-monitoring
+  namespace: {{ .Values.prometheus.namespace }}
+spec:
+  endpoints:
+  - port: http
+    interval: 30s
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "kube-metrics-wrapper.name" . }}
+{{- end }}

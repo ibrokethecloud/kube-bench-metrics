@@ -1,0 +1,16 @@
+{{ if and .Values.prometheus.enabled  .Values.prometheus.namespace}}
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-{{- include "kube-metrics-wrapper.name" . -}}-monitoring
+  namespace: {{ .Values.prometheus.namespace }}
+spec:
+  #serviceAccountName: prometheus-operator-monitoring-operator
+  serviceMonitorSelector:
+    matchLabels:
+      app: {{ include "kube-metrics-wrapper.name" . }}
+  resources:
+    requests:
+      memory: 400Mi
+  enableAdminAPI: false
+{{ end }}

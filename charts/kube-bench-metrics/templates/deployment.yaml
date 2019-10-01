@@ -27,6 +27,12 @@ spec:
           - "--versionOverride"
           - {{ .Values.versionOverride | quote}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.rkeEnvironment }}
+          volumeMounts:
+          - mountPath: /etc/kubernetes
+            name: rke-common
+            readOnly: true
+          {{- end }}
           ports:
             - name: http
               containerPort: 8000
@@ -39,8 +45,21 @@ spec:
             httpGet:
               path: /metrics
               port: http
+          env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}    
+      {{- if .Values.rkeEnvironment }}      
+      volumes:
+      - name: rke-common
+        hostPath:
+          path: /etc/kubernetes
+          type: Directory
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ibrokethecloud/kube-bench-metrics/wrapper"
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,7 +17,7 @@ var (
 			Name: "cis_results",
 			Help: "Details of CIS benchmarks for cluster",
 		},
-		[]string{"test_number", "type", "status"},
+		[]string{"test_number", "type", "status", "scored", "hostname"},
 	)
 )
 
@@ -39,8 +40,10 @@ func GenerateMetrics(w wrapper.Wrapper) {
 			}
 			logrus.Debug(check.ID, " ", check.Type, " ", string(check.State))
 			cisScore.With(prometheus.Labels{"test_number": check.ID,
-				"type":   check.Type,
-				"status": string(check.State)}).Set(status)
+				"type":     check.Type,
+				"status":   string(check.State),
+				"scored":   strconv.FormatBool(check.Scored),
+				"hostname": w.NodeName}).Set(status)
 		}
 	}
 

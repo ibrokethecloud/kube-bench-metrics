@@ -46,3 +46,15 @@ tolerations:
 affinity: {}
 
 versionOverride: "1.13"
+
+## Please use this block to ensure that the /etc/kubernetes path on nodes
+## are mounted in the daemonSet in readonly mode ##
+rkeEnvironment: true
+
+## This block is needed to enable integration with PrometheusOperator
+## using the Prometheus and ServiceMonitor CRD's
+## namespace: points to the namespace in which prometheus is deployed.
+## if monitoring is enabled then the namespace is mandatory field
+prometheus:
+  enabled:  true
+  namespace: cattle-prometheus #If using the Rancher deployed monitoring
