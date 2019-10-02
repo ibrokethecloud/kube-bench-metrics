@@ -36,4 +36,4 @@ These can be overriden. I will add support for all upstream kube-bench versions 
 
 To Do:
 * Build automation
-* Prometheus integration in helm chart
+* Test Cases
