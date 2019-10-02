@@ -34,6 +34,14 @@ The current versions in **cfg** are a copy of ```github.com/rancher/security-sca
 
 These can be overriden. I will add support for all upstream kube-bench versions as well.
 
+The inbuilt grafana dashboard can be deployed to quickly generate a simple view of the cluster compliance:
+
+**Full Cluster View**
+![](images/cluster.png)
+
+**Single Node View**
+![](images/singlenode.png)
+
 To Do:
 * Build automation
 * Test Cases
