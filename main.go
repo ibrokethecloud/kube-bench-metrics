@@ -20,7 +20,9 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 
 	app := cli.NewApp()
-	app.Name = "wrapper"
+	app.Name = "kube-bench-metrics"
+	app.Description = "A wrapper to execute kube-bench-metrics and expose the results as prometheus metrics"
+	app.HelpName = ""
 	app.Version = VERSION
 	app.Action = runWrapper
 	app.HideVersion = true

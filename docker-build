@@ -1,0 +1,3 @@
+#!/bin/sh
+docker build -t gmehta3/kube-bench-builder:latest .
+docker push gmehta3/kube-bench-builder
