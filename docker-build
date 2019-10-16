@@ -1,3 +1,12 @@
 #!/bin/sh
-docker build -t gmehta3/kube-bench-builder:latest .
-docker push gmehta3/kube-bench-builder
+if [ $# -ne 1 ]
+then
+    echo "Expected one argument to be build version."
+    echo "Defaulting to latest"
+    export BUILD_VERSION=latest
+else 
+    export BUILD_VERSION=$1
+fi
+
+docker build -t gmehta3/kube-bench-metrics:${BUILD_VERSION} .
+docker push gmehta3/kube-bench-metrics:${BUILD_VERSION}

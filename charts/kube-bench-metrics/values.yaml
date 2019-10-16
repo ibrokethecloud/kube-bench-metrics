@@ -45,7 +45,7 @@ tolerations:
 
 affinity: {}
 
-versionOverride: "1.13"
+versionOverride: "1.15"
 
 ## Please use this block to ensure that the /etc/kubernetes path on nodes
 ## are mounted in the daemonSet in readonly mode ##

@@ -21,7 +21,7 @@ if [[ $(stat -c %U:%G ${INPUT_DIR}) != "root:root" ]]; then
     exit
 fi
 
-FILES_PERMISSIONS=$(stat -c %U:%G ${INPUT_DIR}/*)
+FILES_PERMISSIONS=$(stat -c %U:%G ${INPUT_DIR}/* | grep -v yaml)
 
 while read -r fileInfo; do
   p=$(echo ${fileInfo} | cut -d' ' -f2)
