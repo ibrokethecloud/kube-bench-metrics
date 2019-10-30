@@ -2,7 +2,7 @@ FROM golang:1.12 AS builder
 RUN mkdir -p /src/github.com/ibrokethecloud/kube-bench-metrics
 COPY . /src/github.com/ibrokethecloud/kube-bench-metrics
 RUN cd /src/github.com/ibrokethecloud/kube-bench-metrics \
-    && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o kube-bench-metrics .
+    && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o kube-bench-metrics -mod vendor .
 
 ## Using upstream aquasec kube-bench and layering it up
 FROM aquasec/kube-bench:0.0.34
