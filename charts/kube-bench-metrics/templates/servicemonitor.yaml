@@ -4,6 +4,7 @@ kind: ServiceMonitor
 metadata:
   labels:
     app: {{ include "kube-metrics-wrapper.name" . }}
+    release: prometheus-operator
   name: {{ include "kube-metrics-wrapper.name" . }}-monitoring
   namespace: {{ .Values.prometheus.namespace }}
 spec:
