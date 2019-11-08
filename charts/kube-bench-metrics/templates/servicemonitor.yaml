@@ -6,7 +6,9 @@ metadata:
     app: {{ include "kube-metrics-wrapper.name" . }}
     release: prometheus-operator
   name: {{ include "kube-metrics-wrapper.name" . }}-monitoring
+  {{ if .Values.prometheus.namespace }}
   namespace: {{ .Values.prometheus.namespace }}
+  {{ end }}
 spec:
   endpoints:
   - port: http

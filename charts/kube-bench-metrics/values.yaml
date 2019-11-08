@@ -57,4 +57,6 @@ rkeEnvironment: true
 ## if monitoring is enabled then the namespace is mandatory field
 prometheus:
   enabled:  true
-  namespace: cattle-prometheus #If using the Rancher deployed monitoring
+  # Specify namespace if you need to create ServiceMonitor in a different namespace 
+  # Else chart will create the ServiceMonitor in the same NS 
+  #namespace: cattle-prometheus #If using the Rancher deployed monitoring
