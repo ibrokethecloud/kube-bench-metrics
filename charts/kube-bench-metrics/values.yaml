@@ -4,8 +4,8 @@
 
 
 image:
-  repository: gmehta3/kube-bench-metrics
-  tag: latest
+  repository: elastisys/kube-bench-metrics
+  tag: 0.1.1
   pullPolicy: Always
 
 imagePullSecrets: []
@@ -35,28 +35,23 @@ nodeSelector: {}
 
 tolerations: 
       - effect: NoSchedule
-        key: node-role.kubernetes.io/controlplane
-        operator: Equal
-        value: "true"
-      - effect: NoExecute
-        key: node-role.kubernetes.io/etcd
-        operator: Equal
-        value: "true"
+        key: node-role.kubernetes.io/master
+        operator: Exists
 
 affinity: {}
 
-versionOverride: "1.15"
+versionOverride: ""
 
 ## Please use this block to ensure that the /etc/kubernetes path on nodes
 ## are mounted in the daemonSet in readonly mode ##
-rkeEnvironment: true
+rkeEnvironment: false
 
 ## This block is needed to enable integration with PrometheusOperator
 ## using the Prometheus and ServiceMonitor CRD's
 ## namespace: points to the namespace in which prometheus is deployed.
 ## if monitoring is enabled then the namespace is mandatory field
 prometheus:
-  enabled:  true
+  enabled:  false
   # Specify namespace if you need to create ServiceMonitor in a different namespace 
   # Else chart will create the ServiceMonitor in the same NS 
   #namespace: cattle-prometheus #If using the Rancher deployed monitoring

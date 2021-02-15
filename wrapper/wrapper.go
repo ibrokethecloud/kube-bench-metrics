@@ -11,7 +11,7 @@ import (
 
 // Wrapper is the place holder for storing the parse results //
 type Wrapper struct {
-	Results       check.Controls
+	Results       check.OverallControls
 	CommandOutput []byte
 	Error         error
 	NodeType      []string
@@ -37,6 +37,7 @@ func NewWrapper(nodeType string, hostname string) (w *Wrapper) {
 // ParseResults will populate the Results in the
 // Wrapper object which can then be exposed as prometheus metrics
 func (w *Wrapper) ParseResults() error {
+
 	err := json.Unmarshal(w.CommandOutput, &w.Results)
 	if err != nil {
 		logrus.Error(err)
@@ -62,6 +63,7 @@ func (w *Wrapper) RunBenchMarking(ctx *cli.Context, node string) (err error) {
 // runCommand is a wrapper to run the command and return an
 // output []byte array.
 func (w *Wrapper) runCommand(args []string) (err error) {
+	logrus.Debug("Args: ", args)
 	cmd := exec.Command("kube-bench", args...)
 
 	output, err := cmd.CombinedOutput()
