@@ -29,9 +29,6 @@ spec:
           - {{ .Values.versionOverride | quote}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            {{- if and ( not .Values.kubeadmVolumes.enabled ) ( not .Values.extraVolumeMounts ) }}
-            []
-            {{- end }}
             {{- if .Values.kubeadmVolumes.enabled }}
             - name: var-lib-etcd
               mountPath: /var/lib/etcd
@@ -75,9 +72,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        {{- if and ( not .Values.kubeadmVolumes.enabled ) ( not .Values.extraVolumes ) }}
-        []
-        {{- end }}
         {{- if .Values.kubeadmVolumes.enabled }}
         - name: var-lib-etcd
           hostPath:
