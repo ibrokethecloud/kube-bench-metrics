@@ -6,10 +6,7 @@
 ## gets overwritten.
 ## As a result these checks need to be run in a loop.
 
-apiServer=$(ps -C api-server -o cmd --no-header )
-etcdServer=$(ps -C etcd -o cmd --no-header )
-
-if [ ! -z "$apiServer"  ] || [ ! -z "$etcdServer" ]
+if [[ -f /etc/kubernetes/manifests/kube-apiserver.yaml ]]
 then
     export nodeType="master"
 else 

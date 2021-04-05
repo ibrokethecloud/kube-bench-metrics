@@ -29,24 +29,25 @@ var (
 // Please refer to value in label to identify the actual result
 // of the test
 func GenerateMetrics(w wrapper.Wrapper) {
-	for _, group := range w.Results.Groups {
-		for _, check := range group.Checks {
-			status := 1.0
-			if check.State != "PASS" {
-				status = 0.0
+	for _, control := range w.Results.Controls {
+		for _, group := range control.Groups {
+			for _, check := range group.Checks {
+				status := 1.0
+				if check.State != "PASS" {
+					status = 0.0
+				}
+				if check.Type == "" {
+					check.Type = "automated"
+				}
+				logrus.Debug(check.ID, " ", check.Type, " ", string(check.State))
+				cisScore.With(prometheus.Labels{"test_number": check.ID,
+					"type":     check.Type,
+					"status":   string(check.State),
+					"scored":   strconv.FormatBool(check.Scored),
+					"hostname": w.NodeName}).Set(status)
 			}
-			if check.Type == "" {
-				check.Type = "automated"
-			}
-			logrus.Debug(check.ID, " ", check.Type, " ", string(check.State))
-			cisScore.With(prometheus.Labels{"test_number": check.ID,
-				"type":     check.Type,
-				"status":   string(check.State),
-				"scored":   strconv.FormatBool(check.Scored),
-				"hostname": w.NodeName}).Set(status)
 		}
 	}
-
 }
 
 // ServeMetrics will simply start up the prom http endpoint to

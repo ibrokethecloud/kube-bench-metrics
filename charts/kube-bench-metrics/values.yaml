@@ -2,10 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-
 image:
-  repository: gmehta3/kube-bench-metrics
-  tag: latest
+  repository: elastisys/kube-bench-metrics
+  tag: 0.1.6
   pullPolicy: Always
 
 imagePullSecrets: []
@@ -15,9 +14,6 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 80
-
-ingress:
-  enabled: false
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -35,28 +31,35 @@ nodeSelector: {}
 
 tolerations: 
       - effect: NoSchedule
-        key: node-role.kubernetes.io/controlplane
-        operator: Equal
-        value: "true"
-      - effect: NoExecute
-        key: node-role.kubernetes.io/etcd
-        operator: Equal
-        value: "true"
+        key: node-role.kubernetes.io/master
+        operator: Exists
 
 affinity: {}
 
-versionOverride: "1.15"
+versionOverride: ""
 
-## Please use this block to ensure that the /etc/kubernetes path on nodes
-## are mounted in the daemonSet in readonly mode ##
-rkeEnvironment: true
+## This mounts some default volumes that should work for a standard kubeadm setup.
+kubeadmVolumes:
+  enabled: true
 
-## This block is needed to enable integration with PrometheusOperator
-## using the Prometheus and ServiceMonitor CRD's
-## namespace: points to the namespace in which prometheus is deployed.
-## if monitoring is enabled then the namespace is mandatory field
-prometheus:
+## You can add extraVolumes and extraVolumeMounts in addition to or instead of the kubeadmVolumes.
+extraVolumes: []
+# - name: some-volume
+#   hostPath:
+#     path: /etc/myDir
+
+extraVolumeMounts: []
+# - name: some-volume
+#   mountPath: /etc/myDir
+#   readOnly: true
+
+## This block is needed to enable integration with Prometheus through the ServiceMonitor CRD
+serviceMonitor:
   enabled:  true
   # Specify namespace if you need to create ServiceMonitor in a different namespace 
   # Else chart will create the ServiceMonitor in the same NS 
-  #namespace: cattle-prometheus #If using the Rancher deployed monitoring
+  #namespace: prometheus-namespace
+
+## Enables a PodSecurityPolicy for kube-bench-metrics
+psp:
+  enabled: true
