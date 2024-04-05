@@ -23,7 +23,7 @@ type Wrapper struct {
 func NewWrapper(nodeType string, hostname string) (w *Wrapper) {
 	nodeChecks := []string{}
 	if nodeType == "master" {
-		nodeChecks = []string{"master", "node"}
+		nodeChecks = []string{"master", "etcd", "controlplane", "node", "policies"}
 	} else {
 		nodeChecks = []string{"node"}
 	}
@@ -91,17 +91,20 @@ func buildCommand(ctx *cli.Context, nodeType string) (args []string) {
 	version := ctx.String("versionOverride")
 
 	logrus.Debug(checks, " ", version)
+
+	args = append(args, "run", "--targets", nodeType)
+
 	if checks != "" {
-		args = append(args, "--check", checks)
+		args = append(args, "--checks", checks)
 	}
 
 	if version != "" {
-		args = append(args, "--version", version)
+		args = append(args, "--benchmark", version)
 	}
 
 	// Append the defaults //
 	// Want Json output only, want noremediation and nosummary
-	args = append(args, nodeType, "--json", "--noremediations", "--nosummary")
+	args = append(args, "--json", "--noremediations", "--nosummary")
 
 	return args
 }

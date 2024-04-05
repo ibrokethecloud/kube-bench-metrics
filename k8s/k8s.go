@@ -3,10 +3,11 @@ package k8s
 import (
 	"errors"
 	"os"
+	"context"
 
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -59,7 +60,7 @@ func (a *APIWrapper) findNodeIP() (err error) {
 		return err
 	}
 
-	p, err := a.Client.CoreV1().Pods(nameSpace).Get(hostname, v1.GetOptions{})
+	p, err := a.Client.CoreV1().Pods(nameSpace).Get(context.TODO(),hostname,metav1.GetOptions{})
 
 	if err != nil {
 		logrus.Error(err)
@@ -76,7 +77,7 @@ func (a *APIWrapper) findNodeIP() (err error) {
 // FindNodeName will use the APIWrapper IP to query
 // K8S api for all nodes and get the node name back
 func (a *APIWrapper) findNodeName() (err error) {
-	nodeList, err := a.Client.CoreV1().Nodes().List(v1.ListOptions{})
+	nodeList, err := a.Client.CoreV1().Nodes().List(context.TODO(),metav1.ListOptions{})
 	if err != nil {
 		logrus.Error(err)
 		return err

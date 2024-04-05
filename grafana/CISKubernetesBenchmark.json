@@ -1,9 +1,61 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.4.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -14,51 +66,65 @@
   },
   "description": "Dashboard to show CIS compliance for a cluster",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 31,
-  "iteration": 1614698395024,
+  "id": null,
   "links": [],
   "panels": [
     {
-      "content": "\n# CIS benchmarking tests, implemented by kube-bench\n\nThese tests are specified by CIS and implemented by kube-bench, see more information (such as descriptions of the different tests) about CIS [here](https://www.cisecurity.org/benchmark/kubernetes/) and kube-bench [here](https://github.com/aquasecurity/kube-bench).\n\nAutomatic vs manual tests: CIS have determined that some tests can be run automatically, kube-bench have aditionally turned some manual tests into automatic ones. In this dashboard the manual tests (as per kube-bench) are only included in the table at the bottom.\n\nScored vs non-scored: scored tests are the test CIS chose as automatic, non-scored test are the manual tests that kube-bench made automatic. Non-scored might not fit as many kubernetes setups and are thus only classified as warnings if they fail.\n",
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 15,
-      "mode": "markdown",
-      "timeFrom": null,
-      "timeShift": null,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n# CIS benchmarking tests, implemented by kube-bench\n\nThese tests are specified by CIS and implemented by kube-bench, see more information (such as descriptions of the different tests) about CIS [here](https://www.cisecurity.org/benchmark/kubernetes/) and kube-bench [here](https://github.com/aquasecurity/kube-bench).\n\nAutomatic vs manual tests: CIS have determined that some tests can be run automatically, kube-bench have aditionally turned some manual tests into automatic ones. In this dashboard the manual tests (as per kube-bench) are only included in the table at the bottom.\n\nScored vs non-scored: scored tests are the test CIS chose as automatic, non-scored test are the manual tests that kube-bench made automatic. Non-scored might not fit as many kubernetes setups and are thus only classified as warnings if they fail.\n\nPlease see [CIS 1.23 Self-Assessment Guide](https://docs.rke2.io/security/cis_self_assessment123) for detailed descriptions and remediations for failing tests.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Panel Title",
       "type": "text"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "All Automated Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -84,13 +150,13 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 11,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -100,11 +166,15 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",type=\"automated\",status=\"PASS\"})/count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -114,27 +184,29 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "title": "Total Checks Passed",
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Automated Scored Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -160,13 +232,13 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 7
+        "y": 8
       },
       "id": 12,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -176,11 +248,15 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"true\",type=\"automated\",status=\"PASS\"})/count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"true\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -190,28 +266,29 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Scored Checks Passed",
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Automated Non-Scored Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -237,13 +314,13 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 7
+        "y": 8
       },
       "id": 13,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -253,11 +330,15 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"false\",type=\"automated\",status=\"PASS\"})/count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"false\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -267,27 +348,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "title": "Non-Scored Checks Passed",
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "All Automated Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -305,11 +386,9 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 4,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -327,11 +406,17 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",type=\"automated\",status=\"PASS\"})",
           "format": "time_series",
           "instant": true,
@@ -341,27 +426,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "title": "Total Checks Passed",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Total Number of All Automated Checks Run",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -379,11 +464,9 @@
         "h": 5,
         "w": 4,
         "x": 4,
-        "y": 13
+        "y": 14
       },
       "id": 6,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -401,13 +484,18 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
-      "repeat": null,
+      "pluginVersion": "10.4.0",
       "repeatDirection": "h",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -421,22 +509,23 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Automated Scored Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -454,11 +543,9 @@
         "h": 5,
         "w": 4,
         "x": 8,
-        "y": 13
+        "y": 14
       },
       "id": 9,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -476,38 +563,44 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"true\",type=\"automated\",status=\"PASS\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "title": "Scored Checks Passed",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Total Number of Automated Scored Checks Run",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -525,11 +618,9 @@
         "h": 5,
         "w": 4,
         "x": 12,
-        "y": 13
+        "y": 14
       },
       "id": 8,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -547,12 +638,18 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "repeatDirection": "h",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"true\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -566,22 +663,23 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Automated Non-Scored Checks Passed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -599,11 +697,9 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 13
+        "y": 14
       },
       "id": 10,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -621,11 +717,17 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"false\",type=\"automated\",status=\"PASS\"})",
           "format": "time_series",
           "instant": true,
@@ -635,27 +737,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "title": "Non-Scored Checks Passed",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "description": "Total Number of Automated Non-Scored Checks Run",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -673,11 +775,9 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 13
+        "y": 14
       },
       "id": 7,
-      "interval": null,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -695,12 +795,18 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "repeatDirection": "h",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\",scored=\"false\",type=\"automated\"})",
           "format": "time_series",
           "instant": true,
@@ -714,11 +820,17 @@
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -741,16 +853,27 @@
         "h": 18,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 2,
-      "links": [],
       "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "cis_results{cluster=~\"$cluster\",hostname=~\"$hostname\"}",
           "format": "table",
           "instant": true,
@@ -784,20 +907,18 @@
     }
   ],
   "refresh": "1m",
-  "schemaVersion": 25,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "prometheus-sc",
-          "value": "prometheus-sc"
+          "text": "Prometheus",
+          "value": "prometheus"
         },
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "datasource",
         "options": [],
@@ -810,14 +931,10 @@
       },
       {
         "allValue": "",
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
+        "current": {},
+        "datasource": {
+          "uid": "$datasource"
         },
-        "datasource": "$datasource",
         "definition": "label_values(cis_results,cluster)",
         "hide": 0,
         "includeAll": true,
@@ -831,21 +948,16 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
         "allValue": "",
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
+        "current": {},
+        "datasource": {
+          "uid": "$datasource"
         },
-        "datasource": "$datasource",
         "definition": "label_values(cis_results,hostname)",
         "hide": 0,
         "includeAll": true,
@@ -859,7 +971,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -897,5 +1008,6 @@
   "timezone": "",
   "title": "CIS Kubernetes Benchmark",
   "uid": "nM0YqnhWz",
-  "version": 4
+  "version": 3,
+  "weekStart": ""
 }
